@@ -1,0 +1,50 @@
+<%= form_for(@image, html: { class: "form-horizontal", role: "form" }) do |f| %>
+  <% if @image.errors.any? %>
+    <div class="alert alert-danger alert-dismissable" role="alert">
+      <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+      <h4><%= pluralize(@image.errors.count, "error") %> prohibited this image from being saved:</h4>
+
+      <ul>
+      <% @image.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="form-group">
+    <%= f.label :name, class: "col-sm-2 control-label" %>
+    <div class="col-sm-10">
+      <%= f.text_field :name, class: "form-control" %>
+    </div>
+  </div>
+  <div class="form-group">
+    <%= f.label :postgres, class: "col-sm-2 control-label" %>
+    <div class="col-sm-10">
+      <%= f.check_box :postgres, class: "form-control" %>
+    </div>
+  </div>
+  <div class="form-group">
+    <%= f.label :nginx, class: "col-sm-2 control-label" %>
+    <div class="col-sm-10">
+      <%= f.check_box :nginx, class: "form-control" %>
+    </div>
+  </div>
+  <div class="form-group">
+    <%= f.label :redis, class: "col-sm-2 control-label" %>
+    <div class="col-sm-10">
+      <%= f.check_box :redis, class: "form-control" %>
+    </div>
+  </div>
+  <div class="form-group">
+    <%= f.label :ruby_version, class: "col-sm-2 control-label" %>
+    <div class="col-sm-10">
+      <%= f.check_box :ruby_version, class: "form-control" %>
+    </div>
+  </div>
+  <div class="form-group">
+    <div class="col-sm-offset-2 col-sm-10">
+      <%= f.submit class: "btn btn-primary" %>
+    </div>
+  </div>
+<% end %>
