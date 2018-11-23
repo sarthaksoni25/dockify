@@ -1,0 +1,14 @@
+aversion: '3'
+      services:
+        web:
+          build: .
+          image: fdc:latest
+          ports:
+            - "3000:3000"
+          expose:
+            - "3000"
+          dns: "8.8.8.8"
+          volumes:
+            - ".:/app"
+          #env_file: .env
+          restart: always

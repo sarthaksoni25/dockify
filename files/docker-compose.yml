@@ -1,0 +1,25 @@
+version: '3'
+      services:
+        web:
+          build: .
+          image: 123457:latest
+          ports:
+            - "3000:3000"
+          expose:
+            - "3000"
+          dns: "8.8.8.8"
+          volumes:
+            - ".:/app"
+          #env_file: .env
+          restart: always
+
+       proxy:
+        image: jwilder/nginx-proxy
+        restart: always
+        depends_on:
+          - web
+        volumes:
+          - /var/run/docker.sock:/tmp/docker.sock:ro
+        ports:
+          - "80:80"
+        container_name: proxy
