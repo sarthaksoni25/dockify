@@ -7,12 +7,17 @@ class ImagesController < ApplicationController
   # GET /images
   # GET /images.json
   def index
-    @images = Image.all
+    @images = Image.where(:user_id=>current_user.id)
   end
 
   # GET /images/1
   # GET /images/1.json
   def show
+    unless current_user.id==@image.user_id
+      flash[:notice] = "You don't have access!"
+      redirect_to root_path
+      return
+    end
   end
 
   # GET /images/new
@@ -22,6 +27,11 @@ class ImagesController < ApplicationController
 
   # GET /images/1/edit
   def edit
+    unless current_user.id==@image.user_id
+      flash[:notice] = "You don't have access!"
+      redirect_to root_path
+      return
+    end
   end
 
   # POST /images
