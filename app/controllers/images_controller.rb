@@ -30,7 +30,7 @@ class ImagesController < ApplicationController
     @image = Image.new(image_params)
     respond_to do |format|
       if @image.save
-        Image.generate_file(@image.name,@image.postgres,@image.nginx,@image.redis,1,current_user)
+        Image.generate_file(@image.name,@image.postgres,@image.redis,@image.nginx,@image.ruby_ver,current_user)
         dpath=File.join(Rails.root,"/public/uploads/user/dockerfile/"+current_user.id.to_s+"/Dockerfile")
         cpath=File.join(Rails.root,"/public/uploads/user/composefile/"+current_user.id.to_s+"/docker-compose.yml")
 
@@ -77,7 +77,7 @@ class ImagesController < ApplicationController
 
   def generate
     @image=Image.find(params[:id])
-    Image.generate_file(@image.name,@image.postgres,@image.redis,@image.nginx,1,current_user)
+    Image.generate_file(@image.name,@image.postgres,@image.redis,@image.nginx,@image.ruby_ver,current_user)
     dpath=File.join(Rails.root,"/public/uploads/user/dockerfile/"+current_user.id.to_s+"/Dockerfile")
     cpath=File.join(Rails.root,"/public/uploads/user/composefile/"+current_user.id.to_s+"/docker-compose.yml")
 
@@ -101,6 +101,6 @@ class ImagesController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def image_params
-      params.require(:image).permit(:name, :postgres, :nginx, :redis, :ruby_version,:user_id)
+      params.require(:image).permit(:name, :postgres, :nginx, :redis, :ruby_ver,:user_id)
     end
 end

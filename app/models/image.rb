@@ -27,7 +27,7 @@ class Image < ApplicationRecord
     RUN npm install -g yarn
     RUN bundle config build.nokogiri --use-system-libraries
     WORKDIR /app
-    ADD .gemrc /app
+    #ADD .gemrc /app
     ADD Gemfile /app/
     ADD Gemfile.lock /app/
 
@@ -51,30 +51,7 @@ class Image < ApplicationRecord
     user.save!
 
     f=File.open(File.join(Rails.root,"/files/docker-compose.yml"),"w")
-    if pg=="true"
-      f.puts("version: '3'
-      services:
-        web:
-          build: .
-          image: "+name.to_s+":latest
-          ports:
-            - \"3000:3000\"
-          expose:
-            - \"3000\"
-          dns: \"8.8.8.8\"
-          volumes:
-            - \".:/app\"
-          env_file: .env
-          restart: always
-          links:
-            - db:db
-          command: bash -c \"bin/rake assets:precompile && bin/rake db:create && bin/rake db:migrate && bin/rails s -b 0.0.0.0\"
-
-        db:
-          image: postgres:latest
-          volumes:
-            - dbdata:/var/lib/postgresql/data  ")
-    else
+    if pg==true and redis==false
       f.puts("version: '3'
       services:
         web:
@@ -88,7 +65,79 @@ class Image < ApplicationRecord
           volumes:
             - \".:/app\"
           #env_file: .env
-          restart: always")
+          restart: always
+          links:
+            - db:db
+          command: bash -c \"bin/rake assets:precompile && bin/rake db:create && bin/rake db:migrate && bin/rails s -b 0.0.0.0\"
+
+        db:
+          image: postgres:latest
+          volumes:
+            - dbdata:/var/lib/postgresql/data  ")
+    elsif pg==false and redis==true
+      f.puts("version: '3'
+      services:
+        web:
+          build: .
+          image: "+name.to_s+":latest
+          ports:
+            - \"3000:3000\"
+          expose:
+            - \"3000\"
+          dns: \"8.8.8.8\"
+          volumes:
+            - \".:/app\"
+          #env_file: .env
+          restart: always
+          links:
+            - redis:redis
+          command: bash -c \"bin/rake assets:precompile && bin/rake db:create && bin/rake db:migrate && bin/rails s -b 0.0.0.0\"
+
+        redis:
+            image: redis:latest  ")
+    elsif pg==true and redis==true
+      f.puts("version: '3'
+      services:
+        web:
+          build: .
+          image: "+name.to_s+":latest
+          ports:
+            - \"3000:3000\"
+          expose:
+            - \"3000\"
+          dns: \"8.8.8.8\"
+          volumes:
+            - \".:/app\"
+          #env_file: .env
+          restart: always
+          links:
+            - redis:redis
+            -db:db
+          command: bash -c \"bin/rake assets:precompile && bin/rake db:create && bin/rake db:migrate && bin/rails s -b 0.0.0.0\"
+
+        redis:
+            image: redis:latest
+        db:
+            image: postgres:latest
+            volumes:
+              - dbdata:/var/lib/postgresql/data  ")
+
+        else
+          f.puts("version: '3'
+services:
+  web:
+    build: .
+    image: "+name.to_s+":latest
+    ports:
+      - \"3000:3000\"
+    expose:
+      - \"3000\"
+    dns: \"8.8.8.8\"
+    volumes:
+      - \".:/app\"
+    #env_file: .env
+    restart: always
+    command: bash -c \"bin/rake assets:precompile && bin/rake db:create && bin/rake db:migrate && bin/rails s -b 0.0.0.0\"")
     end
 
     if nginx==true
