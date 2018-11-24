@@ -1,4 +1,4 @@
-FROM ruby:1-alpine
+FROM ruby:2.4.4-alpine
 
     RUN apk --update add --virtual    build-dependencies build-base libev libev-dev postgresql-dev nodejs nodejs-npm bash    tzdata sqlite-dev git curl libxml2-dev gcc libxslt-dev
 
@@ -17,7 +17,7 @@ FROM ruby:1-alpine
     RUN npm install -g yarn
     RUN bundle config build.nokogiri --use-system-libraries
     WORKDIR /app
-    ADD .gemrc /app
+    #ADD .gemrc /app
     ADD Gemfile /app/
     ADD Gemfile.lock /app/
 

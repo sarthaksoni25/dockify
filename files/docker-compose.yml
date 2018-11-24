@@ -13,3 +13,14 @@ services:
     #env_file: .env
     restart: always
     command: bash -c "bin/rake assets:precompile && bin/rake db:create && bin/rake db:migrate && bin/rails s -b 0.0.0.0"
+
+  proxy:
+        image: jwilder/nginx-proxy
+        restart: always
+        depends_on:
+          - web
+        volumes:
+          - /var/run/docker.sock:/tmp/docker.sock:ro
+        ports:
+          - "80:80"
+        container_name: proxy
