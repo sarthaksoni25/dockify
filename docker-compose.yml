@@ -12,7 +12,7 @@ services:
       - ".:/app"
     #env_file: .env
     restart: always
-    command: bash -c "bundle install && bin/rake assets:precompile && bin/rake db:create && bin/rake db:migrate && bin/rails s -b 0.0.0.0"
+    command: bash -c "bin/rake assets:precompile && bin/rake db:create && bin/rake db:migrate && bin/rails s -b 0.0.0.0"
 
   proxy:
         image: jwilder/nginx-proxy
