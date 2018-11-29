@@ -4,8 +4,12 @@
     Back
   <% end %>
   <%= link_to image_generate_path(@image), class: 'btn btn-primary' do %>
-    <span class="glyphicon glyphicon-pencil"></span>
+    <span class="glyphicon glyphicon-download-alt"></span>
     Generate Files
+  <% end %>
+  <%= link_to edit_image_path(@image), class: 'btn btn-primary' do %>
+    <span class="glyphicon glyphicon-pencil"></span>
+    Edit
   <% end %>
   <h1>Show image</h1>
 </div>
@@ -16,6 +20,9 @@
 
   <dt>Postgres:</dt>
   <dd><%= @image.postgres %></dd>
+
+  <dt>Mysql:</dt>
+  <dd><%= @image.mysql %></dd>
 
   <dt>Nginx:</dt>
   <dd><%= @image.nginx %></dd>

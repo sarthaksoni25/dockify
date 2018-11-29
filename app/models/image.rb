@@ -1,10 +1,11 @@
 class Image < ApplicationRecord
 
   belongs_to :user
+  validates :name, presence: true
+  validates :ruby_ver, presence: true
 
 
-
-  def self.generate_file(name,pg,redis,nginx,ruby_ver,user)
+  def self.generate_file(name,pg,redis,nginx,ruby_ver,user,mysql)
     f = File.new("./files/Dockerfile","w")
     f.puts("FROM ruby:"+ruby_ver.to_s+"-alpine
 
@@ -51,78 +52,122 @@ class Image < ApplicationRecord
     user.save!
 
     f=File.open(File.join(Rails.root,"/files/docker-compose.yml"),"w")
-    if pg==true and redis==false
+    if !(pg=="N/A") and redis=="N/A" and mysql=="N/A"
       f.puts("version: '3'
-      services:
-        web:
-          build: .
-          image: "+name.to_s+":latest
-          ports:
-            - \"3000:3000\"
-          expose:
-            - \"3000\"
-          dns: \"8.8.8.8\"
-          volumes:
-            - \".:/app\"
-          #env_file: .env
-          restart: always
-          links:
-            - db:db
-          command: bash -c \"bin/rake assets:precompile && bin/rake db:create && bin/rake db:migrate && bin/rails s -b 0.0.0.0\"
+services:
+    web:
+      build: .
+      image: "+name.to_s+":latest
+      ports:
+        - \"3000:3000\"
+      expose:
+        - \"3000\"
+      dns: \"8.8.8.8\"
+      volumes:
+        - \".:/app\"
+      #env_file: .env
+      restart: always
+      links:
+        - db:db
+      command: bash -c \"bin/rake assets:precompile && bin/rake db:create && bin/rake db:migrate && bin/rails s -b 0.0.0.0\"
 
-        db:
-          image: postgres:latest
-          volumes:
-            - dbdata:/var/lib/postgresql/data  ")
-    elsif pg==false and redis==true
+    db:
+      image: postgres:"+pg+"
+      volumes:
+        - dbdata:/var/lib/postgresql/data  ")
+    elsif pg=="N/A" and !(redis=="N/A") and mysql=="N/A"
       f.puts("version: '3'
-      services:
-        web:
-          build: .
-          image: "+name.to_s+":latest
-          ports:
-            - \"3000:3000\"
-          expose:
-            - \"3000\"
-          dns: \"8.8.8.8\"
-          volumes:
-            - \".:/app\"
-          #env_file: .env
-          restart: always
-          links:
-            - redis:redis
-          command: bash -c \"bin/rake assets:precompile && bin/rake db:create && bin/rake db:migrate && bin/rails s -b 0.0.0.0\"
+services:
+    web:
+      build: .
+      image: "+name.to_s+":latest
+      ports:
+        - \"3000:3000\"
+      expose:
+        - \"3000\"
+      dns: \"8.8.8.8\"
+      volumes:
+        - \".:/app\"
+      #env_file: .env
+      restart: always
+      links:
+        - redis:redis
+      command: bash -c \"bin/rake assets:precompile && bin/rake db:create && bin/rake db:migrate && bin/rails s -b 0.0.0.0\"
 
-        redis:
-            image: redis:latest  ")
-    elsif pg==true and redis==true
+    redis:
+        image: redis:"+redis)
+    elsif pg=="N/A" and redis=="N/A" and !(mysql=="N/A")
       f.puts("version: '3'
-      services:
-        web:
-          build: .
-          image: "+name.to_s+":latest
-          ports:
-            - \"3000:3000\"
-          expose:
-            - \"3000\"
-          dns: \"8.8.8.8\"
-          volumes:
-            - \".:/app\"
-          #env_file: .env
-          restart: always
-          links:
-            - redis:redis
-            -db:db
-          command: bash -c \"bin/rake assets:precompile && bin/rake db:create && bin/rake db:migrate && bin/rails s -b 0.0.0.0\"
+services:
+    web:
+      build: .
+      image: "+name.to_s+":latest
+      ports:
+        - \"3000:3000\"
+      expose:
+        - \"3000\"
+      dns: \"8.8.8.8\"
+      volumes:
+        - \".:/app\"
+      #env_file: .env
+      restart: always
+      links:
+        -db:db
+      command: bash -c \"bin/rake assets:precompile && bin/rake db:create && bin/rake db:migrate && bin/rails s -b 0.0.0.0\"
+    db:
+        image: mysql:"+mysql)
+    elsif !(mysql=="N/A") and !(redis=="N/A") and pg=="N/A"
+      f.puts("version: '3'
+services:
+    web:
+      build: .
+      image: "+name.to_s+":latest
+      ports:
+        - \"3000:3000\"
+      expose:
+        - \"3000\"
+      dns: \"8.8.8.8\"
+      volumes:
+        - \".:/app\"
+      #env_file: .env
+      restart: always
+      links:
+        - db:db
+        - redis:redis
+      command: bash -c \"bin/rake assets:precompile && bin/rake db:create && bin/rake db:migrate && bin/rails s -b 0.0.0.0\"
 
-        redis:
-            image: redis:latest
-        db:
-            image: postgres:latest
-            volumes:
-              - dbdata:/var/lib/postgresql/data  ")
+    db:
+      image: mysql:"+mysql+"
+    redis:
+      image: redis:"+redis)
+    elsif mysql=="N/A" and !(redis=="N/A") and !(pg=="N/A")
+      f.puts("version: '3'
+services:
+    web:
+      build: .
+      image: "+name.to_s+":latest
+      ports:
+        - \"3000:3000\"
+      expose:
+        - \"3000\"
+      dns: \"8.8.8.8\"
+      volumes:
+        - \".:/app\"
+      #env_file: .env
+      restart: always
+      links:
+        - db:db
+        - redis:redis
+      command: bash -c \"bin/rake assets:precompile && bin/rake db:create && bin/rake db:migrate && bin/rails s -b 0.0.0.0\"
 
-        else
+    db:
+      image: postgres:"+pg+"
+      volumes:
+        - dbdata:/var/lib/postgresql/data
+    redis:
+      image: redis:"+redis)
+
+    elsif mysql=="N/A" and redis=="N/A" and pg=="N/A"
           f.puts("version: '3'
 services:
   web:
@@ -141,7 +186,7 @@ services:
     end
 
     if nginx==true
-      f.puts("\n  proxy:
+      f.puts("\n    proxy:
         image: jwilder/nginx-proxy
         restart: always
         depends_on:

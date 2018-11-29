@@ -12,6 +12,7 @@
       <tr>
             <th>Name</th>
             <th>Postgres</th>
+            <th>Mysql</th>
             <th>Nginx</th>
             <th>Redis</th>
             <th>Ruby version</th>
@@ -25,6 +26,7 @@
       <%= content_tag_for(:tr, @images) do |image| %>
             <td><%= image.name %></td>
             <td><%= image.postgres %></td>
+            <td><%= image.mysql %></td>
             <td><%= image.nginx %></td>
             <td><%= image.redis %></td>
             <td><%= image.ruby_ver %></td>
