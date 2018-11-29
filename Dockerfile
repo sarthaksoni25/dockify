@@ -29,7 +29,8 @@ FROM ruby:2.4.4-alpine
 #     RUN gem install nokogiri -v '1.8.5'
 #     RUN gem install nio4r -v '2.3.1'
 #     RUN bundle lock
-    RUN bundle install --deployment
+    RUN gem install bundler
+    RUN bundle install --jobs 8
 
     # ADD package.json /app/
 
