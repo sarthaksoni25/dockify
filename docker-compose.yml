@@ -2,7 +2,7 @@ version: '3'
 services:
   web:
     build: .
-    image: dockify:latest
+    image: dockify1:latest
     ports:
       - "3000:3000"
     expose:
