@@ -1,4 +1,4 @@
-FROM ruby:2.4-alpine
+FROM ruby:2.4.4-alpine
 
     RUN apk --update add --virtual    build-dependencies build-base libev libev-dev postgresql-dev nodejs nodejs-npm bash    tzdata sqlite-dev git curl libxml2-dev gcc libxslt-dev
 
