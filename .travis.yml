@@ -1,0 +1,13 @@
+sudo: required
+
+language: ruby
+
+services:
+  - docker-compose
+
+before_script:
+  - docker-compose up --build -d
+script:
+  - echo "Done !!!"
+after_script:
+  - docker-compose down
