@@ -26,9 +26,9 @@ FROM ruby:2.4-alpine
     ENV NODE_ENV=development
 
     # Modify bundle config to use local gem cache and then do bundle install
-    RUN gem install nokogiri -v '1.8.5'
-    RUN gem install nio4r -v '2.3.1'
-    RUN bundle install --jobs 8
+#     RUN gem install nokogiri -v '1.8.5'
+#     RUN gem install nio4r -v '2.3.1'
+#     RUN bundle install --jobs 8
 
     # ADD package.json /app/
 
