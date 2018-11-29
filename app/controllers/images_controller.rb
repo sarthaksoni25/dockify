@@ -40,16 +40,17 @@ class ImagesController < ApplicationController
     @image = Image.new(image_params)
     respond_to do |format|
       if @image.save
-        Image.generate_file(@image.name,@image.postgres,@image.redis,@image.nginx,@image.ruby_ver,current_user)
+        Image.generate_file(@image.name,@image.postgres,@image.redis,@image.nginx,@image.ruby_ver,current_user,@image.mysql)
         dpath=File.join(Rails.root,"/public/uploads/user/dockerfile/"+current_user.id.to_s+"/Dockerfile")
         cpath=File.join(Rails.root,"/public/uploads/user/composefile/"+current_user.id.to_s+"/docker-compose.yml")
-
+        rpath=File.join(Rails.root,"/public/readme.txt")
         zipfile=File.join(Rails.root,"/public/"+@image.name+".zip")
         # send_file(dpath,:filename => "Dockerfile", :disposition => "attachment")
 
         Zip::File.open(zipfile,Zip::File::CREATE) do |zip|
           zip.add("docker-compose.yml",cpath)
           zip.add("Dockerfile",dpath)
+          zip.add("readme.txt",rpath)
         end
         # send_file("../../files/",:filename => i.to_s)
         format.html { redirect_to @image, notice: 'Image was successfully created.' }
@@ -87,10 +88,9 @@ class ImagesController < ApplicationController
 
   def generate
     @image=Image.find(params[:id])
-    Image.generate_file(@image.name,@image.postgres,@image.redis,@image.nginx,@image.ruby_ver,current_user)
+    Image.generate_file(@image.name,@image.postgres,@image.redis,@image.nginx,@image.ruby_ver,current_user,@image.mysql)
     dpath=File.join(Rails.root,"/public/uploads/user/dockerfile/"+current_user.id.to_s+"/Dockerfile")
     cpath=File.join(Rails.root,"/public/uploads/user/composefile/"+current_user.id.to_s+"/docker-compose.yml")
-
     zipfile=File.join(Rails.root,"/public/"+@image.name+".zip")
     # send_file(dpath,:filename => "Dockerfile", :disposition => "attachment")
 
@@ -111,6 +111,6 @@ class ImagesController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def image_params
-      params.require(:image).permit(:name, :postgres, :nginx, :redis, :ruby_ver,:user_id)
+      params.require(:image).permit(:name, :postgres, :nginx, :redis, :ruby_ver,:user_id,:mysql)
     end
 end

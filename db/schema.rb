@@ -10,17 +10,18 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20181124130427) do
+ActiveRecord::Schema.define(version: 20181129122124) do
 
   create_table "images", force: :cascade do |t|
     t.string "name"
-    t.boolean "postgres"
     t.boolean "nginx"
-    t.boolean "redis"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "user_id"
     t.string "ruby_ver"
+    t.string "postgres"
+    t.string "redis"
+    t.string "mysql"
     t.index ["user_id"], name: "index_images_on_user_id"
   end
 
