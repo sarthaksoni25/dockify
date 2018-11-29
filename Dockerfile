@@ -16,6 +16,7 @@ FROM ruby:2.4-alpine
     # RUN apt-get update -qq && apt-get install -y yarn
     RUN npm install -g yarn
     RUN bundle config build.nokogiri --use-system-libraries
+    RUN bundle config build.nio4r --with-cflags="-std=c99"
     WORKDIR /app
     #ADD .gemrc /app
     ADD Gemfile /app/
