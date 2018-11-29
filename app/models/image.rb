@@ -186,7 +186,7 @@ services:
     end
 
     if nginx==true
-      f.puts("\n    proxy:
+      f.puts("\n  proxy:
         image: jwilder/nginx-proxy
         restart: always
         depends_on:
